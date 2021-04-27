@@ -1,0 +1,161 @@
+* {
+  outline: none;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  font-family: 'Poppins', sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  position: absolute;
+  width: 100%;
+  padding: 10px 20px;
+  z-index: 50;
+}
+
+header a {
+  transition: 0.5s;
+}
+header a:hover {
+  display: inline-block;
+  animation: 'back' 3s ease infinite;
+}
+.content {
+  height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+}
+form {
+  width: 550px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: white;
+  z-index: 20;
+}
+form .heading {
+  color: #151515;
+  font-size: 30px;
+  font-weight: bolder;
+}
+form .no-acc {
+  color: #717f94;
+}
+
+@keyframes back {
+  0%   {transform: translateX(0);}
+  50%   {transform: translateX(15px);}
+  100% {transform: translateX(0);}
+}
+
+.form__div{
+  position: relative;
+  height: 48px;
+  width: 80%;
+  margin-bottom: 1.5rem;
+  margin-top:50px;
+}
+.form__input{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% - 2rem);
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #e3e3e3;
+  border-bottom: 3px solid #e3e3e3;
+  outline: none;
+  padding: 1rem;
+  background: none;
+  z-index: 1;
+  transition: 0.5s;
+}
+.form__label{
+  position: absolute;
+  padding: 0 .25rem;
+  background-color: #fff;
+  transition: .3s;
+  top: -0.6rem;
+  left: .8rem;
+  color: black;
+  font-size: 0.8rem;
+  font-weight: 500;
+  z-index: 10;
+}
+
+
+/*Input focus*/
+.form__input:focus{
+  border: 1px solid #0c8b51;
+  border-bottom: 3px solid #0c8b51;
+}
+
+.error {
+  position: absolute;
+  bottom: -30px;
+  left: 1rem;
+  font-size: 0.85rem;
+  color:rgb(207, 103, 103);
+}
+
+.submit {
+  background-color: #0c8b51;
+  color:white;
+  border-radius: 6px;
+  padding: 1rem;
+  width: 80%;
+  text-align: center;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 50px;
+  border: none;
+  outline: none;
+}
+
+.background {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-image: url('../img/online-education2.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/*------------------------------------------*/
+
+.non-active {
+  visibility: hidden !important;
+  position: absolute !important;
+  opacity: 0;
+}
+
+.lock {
+  overflow: hidden;
+}
+
+/*------------------------------------------*/

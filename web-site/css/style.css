@@ -12,7 +12,6 @@ body {
   padding: 0;
   position: relative;
   font-family: 'Poppins', sans-serif;
-  ;
 }
 
 a {
@@ -441,6 +440,7 @@ main .content-5 {
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  transition: 0.5s;
 }
 .q-text .text {
   font-weight: 500;
@@ -449,11 +449,26 @@ main .content-5 {
   width: 100%;
   position: relative;
   background-color: white;
+  max-height: 0;
+  transition: 0.5s;
+  overflow: hidden;
 }
 .answer .text {
   margin: 20px;
   text-align: left;
   font-size: 0.85rem;
+}
+
+.showed {
+  max-height: 500px;
+  transition: 2s;
+}
+.changed {
+  background-color: #0c8b51;
+  color:white;
+}
+.rotated {
+  transform: rotate(90deg);
 }
 /*------------------------*/
 
