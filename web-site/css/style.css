@@ -175,14 +175,14 @@ header {
 .img-content .intro-box {
   width: 90%;
   z-index: 5;
-  animation: 'rotate-box' 8s linear infinite;
+  animation: rotate-box 8s linear infinite;
 }
 
 .img-content .education-banner {
   width: 90%;
   z-index: 6;
   position: absolute;
-  animation: 'translate-box' 8s ease infinite;
+  animation: translate-box 8s ease infinite;
   margin-top: 150px;
 }
 @keyframes rotate-box {
