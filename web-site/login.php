@@ -4,7 +4,7 @@
 ob_start();
 $dbc = mysqli_connect('localhost', 'root', '', 'b_study') OR DIE('<p class="">Ошибка подключения к базе данных </p>');
 
-//if(!isset($_COOKIE['username'])) {
+if(!isset($_COOKIE['username'])) {
 	if(isset($_POST['submitLog'])) {
 		$username = mysqli_real_escape_string($dbc, trim($_POST['username']));
 		$password = mysqli_real_escape_string($dbc, trim($_POST['password']));
@@ -13,9 +13,9 @@ $dbc = mysqli_connect('localhost', 'root', '', 'b_study') OR DIE('<p class="">О
 			$data = mysqli_query($dbc,$query);
 			if(mysqli_num_rows($data) == 1) {
 				$row = mysqli_fetch_assoc($data);
-				//setcookie('username', $row['username'], time() + (60*60*24*30));
+				setcookie('username', $row['username'], time() + (60*60*24*30));
 				ob_end_flush();
-        header('Location: index.html');
+        header('Location: welcome.php');
 			}
 			else {
 				ob_end_flush();
@@ -24,7 +24,7 @@ $dbc = mysqli_connect('localhost', 'root', '', 'b_study') OR DIE('<p class="">О
 		}
 
 	}
-//}
+}
 
 ?>
 
@@ -58,7 +58,7 @@ $dbc = mysqli_connect('localhost', 'root', '', 'b_study') OR DIE('<p class="">О
 <body>
 
   <header>
-    <a href=""><i class="fal fa-long-arrow-left fa-3x"></i></a>
+    <a href="index.html"><i class="fal fa-long-arrow-left fa-3x"></i></a>
   </header>
 
   <div class="content">

@@ -61,7 +61,7 @@ if(isset($_POST['submitReg'])){
 <body>
 
   <header>
-    <a href=""><i class="fal fa-long-arrow-left fa-3x"></i></a>
+    <a href="index.html"><i class="fal fa-long-arrow-left fa-3x"></i></a>
   </header>
 
   <div class="content">
