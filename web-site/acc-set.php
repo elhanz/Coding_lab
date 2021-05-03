@@ -9,6 +9,24 @@ if(!empty($_COOKIE['username'])) {
 	$profileInfo = mysqli_query($dbc, "SELECT username,first_name, second_name,country,address,tel_number,email  FROM `users` WHERE username = '$username'");
 	$rowProfileInfo = mysqli_fetch_array($profileInfo);
 }
+
+if(isset($_POST['saveBtn'])) {
+	$first_name = mysqli_real_escape_string($dbc, trim($_POST['first_name']));
+  $second_name = mysqli_real_escape_string($dbc, trim($_POST['second_name']));
+	$country = mysqli_real_escape_string($dbc, trim($_POST['country']));
+	$address = mysqli_real_escape_string($dbc, trim($_POST['address']));
+  $tel_number = mysqli_real_escape_string($dbc, trim($_POST['tel_number']));
+	$email = mysqli_real_escape_string($dbc, trim($_POST['email']));
+
+	if(!empty($first_name) && !empty($second_name) && !empty($tel_number) && !empty($email) && !empty($country) && !empty($address)) {
+		$query ="UPDATE `users` SET `first_name`='$first_name', `second_name`='$second_name', `country`='$country', `address`='$address', `tel_number`='$tel_number', `email`='$email' WHERE `username` = '$username' ";
+		mysqli_query($dbc,$query);
+
+		ob_end_flush();
+		mysqli_close($dbc);
+		header('Location: profile.php');
+	 }
+}
 ?>
 
 <html>
@@ -107,42 +125,69 @@ if(!empty($_COOKIE['username'])) {
     </div>
   </section>
 
-  <section class="banner banner-2">
+  <section class="banner banner-3">
     <div class="background-box"></div>
     <div class="text-content">
-      <p class="heading"><?php echo $username; ?></p>
+      <p class="heading"></p>
     </div>
   </section>
 
   <main class="profileMain">
-    <section class="profileInfoBlock">
-      <p class="heading">About me</p>
-      <hr style="opacity:0.1;">
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">First name :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[1]; ?></span>
-      </div>
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">Second name :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[2]; ?></span>
-      </div>
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">Country :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[3]; ?></span>
-      </div>
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">Address :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[4]; ?></span>
-      </div>
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">Telephone number :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[5]; ?></span>
-      </div>
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">Email :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[6]; ?></span>
-      </div>
-      <a href="acc-set.php" class="acc-set">Account settings</a>
+    <section class="AccSetBlock">
+			<div class="AccSetSections">
+				<p class="eachSection">Profile</p>
+				<p class="eachSection">Payment</p>
+			</div>
+			<div class="AccSetSectionBlock">
+				<form class="" action="acc-set.php" method="post">
+					<p class="heading">Account</p>
+					<div class="eachProfileInfo">
+						<p class="infoName">First name</p>
+						<input type="text" name="first_name" value="<?php echo $rowProfileInfo[1]; ?>" required>
+					</div>
+					<div class="eachProfileInfo">
+						<p class="infoName">Second name</p>
+						<input type="text" name="second_name" value="<?php echo $rowProfileInfo[2]; ?>" required>
+					</div>
+					<div class="eachProfileInfo">
+						<p class="infoName">Country</p>
+						<input type="text" name="country" value="<?php echo $rowProfileInfo[3]; ?>">
+					</div>
+					<div class="eachProfileInfo">
+						<p class="infoName">Address</p>
+						<input type="text" name="address" value="<?php echo $rowProfileInfo[4]; ?>">
+					</div>
+					<div class="eachProfileInfo">
+						<p class="infoName">Telephone number</p>
+						<input type="text" name="tel_number" value="<?php echo $rowProfileInfo[5]; ?>" required>
+					</div>
+					<div class="eachProfileInfo">
+						<p class="infoName">Email</p>
+						<input type="text" name="email" value="<?php echo $rowProfileInfo[6]; ?>" required>
+					</div>
+					<input type="submit" name="saveBtn" value="Save" class="save-btn">
+				</form>
+
+				<hr style="margin-top: 30px; margin-bottom: 30px; color: rgb(219, 219, 219);">
+				<form class="" action="acc-set.php" method="post">
+					<p class="heading">Password</p>
+					<div class="eachProfileInfo">
+						<p class="infoName">Current password</p>
+						<input type="text" name="" value="" required>
+					</div>
+					<div class="eachProfileInfo">
+						<p class="infoName">New password</p>
+						<input type="text" name="" value="" required>
+					</div>
+					<div class="eachProfileInfo">
+						<p class="infoName">Repeat new password</p>
+						<input type="text" name="" value="" required>
+					</div>
+					<input type="submit" name="" value="Change password" class="save-btn">
+				</form>
+
+				<hr style="margin-top: 30px; margin-bottom: 30px; color: rgb(219, 219, 219);">
+			</div>
     </section>
   </main>
 
@@ -168,7 +213,7 @@ if(!empty($_COOKIE['username'])) {
         <p class="menu-item"><a href="">Chats</a></p>
         <p class="menu-item"><a href="">Courses</a></p>
         <p class="menu-item"><a href="">Forums</a></p>
-        <p class="menu-item"><a href="acc-set.php">Account settings</a></p>
+        <p class="menu-item"><a href="">Account settings</a></p>
         <p class="menu-item"><a href="">Support center</a></p>
         <p class="menu-item"><a href="">Log out</a></p>
       </div>

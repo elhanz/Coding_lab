@@ -76,7 +76,7 @@
     </div>
     <hr style="width:75%; opacity:0.15;">
     <div class="eachPage">
-      <a href="#">
+      <a href="acc-set.php">
         <span>Account settings</span>
         <i class="fas fa-chevron-right"></i>
       </a>
