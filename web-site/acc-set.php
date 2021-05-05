@@ -27,6 +27,31 @@ if(isset($_POST['saveBtn'])) {
 		header('Location: profile.php');
 	 }
 }
+
+if(isset($_POST['changeBtn'])) {
+	$current_password = mysqli_real_escape_string($dbc, trim($_POST['current_password']));
+  $password = mysqli_real_escape_string($dbc, trim($_POST['password']));
+	$re_password = mysqli_real_escape_string($dbc, trim($_POST['re_password']));
+
+	if(!empty($re_password) && !empty($password) && !empty($current_password)) {
+		$query_check = "SELECT `username` FROM `users` WHERE username = '$username' AND password = SHA('$current_password')";
+		$data = mysqli_query($dbc,$query_check);
+		if(mysqli_num_rows($data) == 1)  {
+			$query ="UPDATE `users` SET `password`= SHA('$password') WHERE `username` = '$username' ";
+			mysqli_query($dbc,$query);
+			ob_end_flush();
+			mysqli_close($dbc);
+			header('Location: acc-set.php?p=1');
+		} else {
+			ob_end_flush();
+			mysqli_close($dbc);
+			header('Location: acc-set.php?p=0');
+		}
+
+
+
+	 }
+}
 ?>
 
 <html>
@@ -139,15 +164,15 @@ if(isset($_POST['saveBtn'])) {
 				<p class="eachSection">Payment</p>
 			</div>
 			<div class="AccSetSectionBlock">
-				<form class="" action="acc-set.php" method="post">
+				<form class="" onsubmit="return validationSave();" action="acc-set.php" method="post">
 					<p class="heading">Account</p>
 					<div class="eachProfileInfo">
 						<p class="infoName">First name</p>
-						<input type="text" name="first_name" value="<?php echo $rowProfileInfo[1]; ?>" required>
+						<input type="text" id="first_name" name="first_name" value="<?php echo $rowProfileInfo[1]; ?>" required>
 					</div>
 					<div class="eachProfileInfo">
 						<p class="infoName">Second name</p>
-						<input type="text" name="second_name" value="<?php echo $rowProfileInfo[2]; ?>" required>
+						<input type="text" id="second_name" name="second_name" value="<?php echo $rowProfileInfo[2]; ?>" required>
 					</div>
 					<div class="eachProfileInfo">
 						<p class="infoName">Country</p>
@@ -159,31 +184,41 @@ if(isset($_POST['saveBtn'])) {
 					</div>
 					<div class="eachProfileInfo">
 						<p class="infoName">Telephone number</p>
-						<input type="text" name="tel_number" value="<?php echo $rowProfileInfo[5]; ?>" required>
+						<input type="text" id="tel_number" name="tel_number" value="<?php echo $rowProfileInfo[5]; ?>" required>
 					</div>
 					<div class="eachProfileInfo">
 						<p class="infoName">Email</p>
-						<input type="text" name="email" value="<?php echo $rowProfileInfo[6]; ?>" required>
+						<input type="text" id="email" name="email" value="<?php echo $rowProfileInfo[6]; ?>" required>
+					</div>
+					<div class="error_div">
+						<p id="save_error">
+
+						</p>
 					</div>
 					<input type="submit" name="saveBtn" value="Save" class="save-btn">
 				</form>
 
 				<hr style="margin-top: 30px; margin-bottom: 30px; color: rgb(219, 219, 219);">
-				<form class="" action="acc-set.php" method="post">
+				<form class="" onsubmit="return validationChangePass();" action="acc-set.php" method="post">
 					<p class="heading">Password</p>
 					<div class="eachProfileInfo">
 						<p class="infoName">Current password</p>
-						<input type="text" name="" value="" required>
+						<input type="text" id="current_password" name="current_password" value="" required>
 					</div>
 					<div class="eachProfileInfo">
 						<p class="infoName">New password</p>
-						<input type="text" name="" value="" required>
+						<input type="text" id="password" name="password" value="" required>
 					</div>
 					<div class="eachProfileInfo">
 						<p class="infoName">Repeat new password</p>
-						<input type="text" name="" value="" required>
+						<input type="text" id="re_password" name="re_password" value="" required>
 					</div>
-					<input type="submit" name="" value="Change password" class="save-btn">
+					<div class="error_div">
+						<p id="change_pass_error">
+
+						</p>
+					</div>
+					<input type="submit" name="changeBtn" value="Change password" class="save-btn">
 				</form>
 
 				<hr style="margin-top: 30px; margin-bottom: 30px; color: rgb(219, 219, 219);">
@@ -240,7 +275,17 @@ if(isset($_POST['saveBtn'])) {
   <script src="aos-master/dist/aos.js"></script>
   <script type="text/javascript" src="js/faq.js"></script>
   <script type="text/javascript" src="js/burgerJS.js"></script>
-
+	<script type="text/javascript" src="js/validationAccSet.js"></script>
+	<script type="text/javascript">
+		var correctPassword = "<?php echo $_GET['p']; ?>";
+		if (correctPassword == "1") {
+			$("#change_pass_error").toggleClass('correct');
+			document.getElementById('change_pass_error').innerHTML = "Password was successfully changed";
+		}
+		if (correctPassword == "0") {
+			document.getElementById('change_pass_error').innerHTML = "Current password is not correct";
+		}
+	</script>
 </body>
 
 </html>

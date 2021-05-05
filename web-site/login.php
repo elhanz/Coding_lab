@@ -19,7 +19,7 @@ if(!isset($_COOKIE['username'])) {
 			}
 			else {
 				ob_end_flush();
-        header('Location: register.php');
+        header('Location: login.php?r=0');
 			}
 		}
 
@@ -68,15 +68,13 @@ if(!isset($_COOKIE['username'])) {
       <div class="form__div">
         <input type="text" class="form__input" placeholder=" " name="username" required>
         <label for="" class="form__label">Username</label>
-        <p class="error">It should not be empty!</p>
       </div>
       <div class="form__div">
         <input type="password" class="form__input" placeholder=" " name="password" required>
         <label for="" class="form__label">Password</label>
-        <p class="error">It should not be empty!</p>
       </div>
       <input type="submit" name="submitLog" value="Log in" class="submit">
-      <p class="form-error">Username or password is not correct</p>
+      <p class="form-error" id="form_error"> </p>
     </form>
     <div class="background"></div>
   </div>
@@ -84,7 +82,12 @@ if(!isset($_COOKIE['username'])) {
   <script src="aos-master/dist/aos.js"></script>
   <script type="text/javascript" src="js/faq.js"></script>
   <script type="text/javascript" src="js/burgerJS.js"></script>
-
+	<script type="text/javascript">
+		var registered = "<?php echo $_GET['r']; ?>";
+		if (registered == "0") {
+			document.getElementById('form_error').innerHTML = "Username or password is not correct";
+		}
+	</script>
 </body>
 
 </html>

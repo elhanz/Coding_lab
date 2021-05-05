@@ -716,6 +716,14 @@ main .profileInfoBlock {
   width: calc(100% - 20px);
 }
 
+.error_div p{
+  color: rgb(207, 103, 103);
+}
+
+.error_div .correct{
+  color: rgb(103, 207, 115) !important;
+}
+
 .save-btn {
   background-color: #0c8b51;
   color:white;

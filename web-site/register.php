@@ -20,11 +20,11 @@ if(isset($_POST['submitReg'])){
 			mysqli_query($dbc,$query);
       ob_end_flush();
 			mysqli_close($dbc);
-			header('Location: index.html');
+			header('Location: login.php');
 		}
 		else {
       ob_end_flush();
-			header('Location: login.php');
+			header('Location: register.php?r=1');
 		}
 	 }
 }
@@ -65,46 +65,46 @@ if(isset($_POST['submitReg'])){
   </header>
 
   <div class="content">
-    <form class="" action="register.php" method="post" >
+    <form class="" onsubmit="return validationReg();" action="register.php" method="post" >
       <p class="heading">Register on B-Study</p>
       <p class="no-acc"><a href="login.php">Already registered? Log in.</a></p>
       <div class="form__div">
-        <input type="text" class="form__input" placeholder=" " name="username" required>
+        <input type="text" class="form__input" placeholder=" " name="username" id="username" required>
         <label for="" class="form__label">Username</label>
-        <p class="error">It should not be empty!</p>
+        <p class="error" id="username_error"> </p>
       </div>
       <div class="form__div">
-        <input type="text" class="form__input" placeholder=" " name="first_name" required>
+        <input type="text" class="form__input" placeholder=" " name="first_name" id="first_name" required>
         <label for="" class="form__label">First name</label>
-        <p class="error">It should not be empty!</p>
+        <p class="error" id="first_name_error"> </p>
       </div>
       <div class="form__div">
-        <input type="text" class="form__input" placeholder=" " name="second_name" required>
+        <input type="text" class="form__input" placeholder=" " name="second_name" id="second_name" required>
         <label for="" class="form__label">Second name</label>
-        <p class="error">It should not be empty!</p>
+        <p class="error" id="second_name_error"> </p>
       </div>
       <div class="form__div">
-        <input type="text" class="form__input" placeholder=" " name="tel_number" required>
+        <input type="text" class="form__input" placeholder=" " name="tel_number" id="tel_number" required>
         <label for="" class="form__label">Telephone number</label>
-        <p class="error">It should not be empty!</p>
+        <p class="error" id="tel_number_error"> </p>
       </div>
       <div class="form__div">
-        <input type="text" class="form__input" placeholder=" " name="email" required>
+        <input type="text" class="form__input" placeholder=" " name="email" id="email" required>
         <label for="" class="form__label">Email</label>
-        <p class="error">It should not be empty!</p>
+        <p class="error" id="email_error"> </p>
       </div>
       <div class="form__div">
-        <input type="password" class="form__input" placeholder=" " name="password" required>
+        <input type="password" class="form__input" placeholder=" " name="password" id="password" required>
         <label for="" class="form__label">Password</label>
-        <p class="error">It should not be empty!</p>
+        <p class="error" id="password_error"> </p>
       </div>
       <div class="form__div">
-        <input type="password" class="form__input" placeholder=" " name="re_password" required>
+        <input type="password" class="form__input" placeholder=" " name="re_password" id="re_password" required>
         <label for="" class="form__label">Repeat Password</label>
-        <p class="error">It should not be empty!</p>
+        <p class="error" id="re_password_error"> </p>
       </div>
       <input type="submit" name="submitReg" value="Register" class="submit">
-			<p class="form-error">This username is already registered</p>
+			<p class="form-error" id="form_error"> </p>
     </form>
     <div class="background"></div>
   </div>
@@ -112,6 +112,13 @@ if(isset($_POST['submitReg'])){
   <script src="aos-master/dist/aos.js"></script>
   <script type="text/javascript" src="js/faq.js"></script>
   <script type="text/javascript" src="js/burgerJS.js"></script>
+	<script type="text/javascript" src="js/validationReg.js"></script>
+	<script type="text/javascript">
+		var registered = "<?php echo $_GET['r']; ?>";
+		if (registered == "1") {
+			document.getElementById('form_error').innerHTML = "This username is already registered";
+		}
+	</script>
 
 </body>
 
