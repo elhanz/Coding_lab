@@ -4,11 +4,28 @@
 	ob_start();
 	$dbc = mysqli_connect('localhost', 'root', '', 'b_study') OR DIE('<p class="h1">Ошибка подключения к базе данных </p>');
 	//$dbc = mysqli_connect('mysql.zzz.com.ua', 'bakytkerey', 'Bati314565', 'bakytkerey_b') OR DIE('<p class="h1">Ошибка подключения к базе данных </p>');
-if(!empty($_COOKIE['username'])) {
-  $username = $_COOKIE['username'];
-	$profileInfo = mysqli_query($dbc, "SELECT username,first_name, second_name,country,address,tel_number,email  FROM `users` WHERE username = '$username'");
-	$rowProfileInfo = mysqli_fetch_array($profileInfo);
-}
+	if(!empty($_COOKIE['username'])) {
+	  $username = $_COOKIE['username'];
+		$forums = mysqli_query($dbc, "SELECT * FROM `forums`");
+	}
+
+
+	if(isset($_GET['id']) && (preg_match("/^[0-9]+$/i", $_GET['id']))) {
+		$forum_id = $_GET["id"];
+		$exactForum = mysqli_query($dbc, "SELECT * FROM `forums` WHERE forum_id = '$forum_id'");
+		$rowExactForum=mysqli_fetch_assoc($exactForum);
+
+		$answers = mysqli_query($dbc, "SELECT * FROM `messages` WHERE forum_id = '$forum_id' ORDER BY message_id DESC");
+	}
+	if(isset($_POST['answerBtn'])) {
+		$date = date('Y-m-d');
+		$answer_message = mysqli_real_escape_string($dbc, trim($_POST['answer_message']));
+		mysqli_query($dbc, "INSERT INTO `messages`(`forum_id`, `from_user`, `date`, `message`) VALUES ('$forum_id','$username','$date','$answer_message')");
+		ob_end_flush();
+		mysqli_close($dbc);
+		header("Refresh:0");
+	}
+
 ?>
 
 <html>
@@ -107,43 +124,114 @@ if(!empty($_COOKIE['username'])) {
     </div>
   </section>
 
-  <section class="banner banner-2">
+  <section class="banner banner-3">
     <div class="background-box"></div>
     <div class="text-content">
-      <p class="heading"><?php echo $username; ?></p>
+      <p class="heading"></p>
     </div>
   </section>
 
-  <main class="profileMain">
-    <section class="profileInfoBlock">
-      <p class="heading">About me</p>
-      <hr style="opacity:0.1;">
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">First name :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[1]; ?></span>
-      </div>
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">Second name :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[2]; ?></span>
-      </div>
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">Country :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[3]; ?></span>
-      </div>
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">Address :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[4]; ?></span>
-      </div>
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">Telephone number :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[5]; ?></span>
-      </div>
-      <div class="eachInfoBlock">
-        <span class="eachInfoText-1">Email :</span>
-        <span class="eachInfoText-2"><?php echo $rowProfileInfo[6]; ?></span>
-      </div>
-      <a href="acc-set.php" class="acc-set">Account settings</a>
-    </section>
+  <main>
+		<?php
+			if(!(isset($_GET['id']))) {
+		?>
+		<p class="heading">Forums</p>
+		<form class="" action="" method="post">
+			<section class="filterSection">
+				<input type="submit" name="NewestBtn" value="Newest">
+				<input type="submit" name="ActiveBtn" value="Active">
+				<input type="submit" name="UnansweredBtn" value="Unanswered">
+			</section>
+		</form>
+
+		<?php
+				while($rowForums=mysqli_fetch_assoc($forums)) {
+		?>
+
+		<button class="eachForum" id="<?php echo $rowForums['forum_id']; ?>" name="forumBtn" onclick="showForum(this.id)">
+			<p class="author-date">
+			Posted by
+			<span class="author"><?php echo $rowForums['author_user']; ?></span>
+			<span class="date"><?php echo $rowForums['date']; ?></span>
+			</p>
+			<p class="topic"><?php echo $rowForums['topic']; ?></p>
+			<p class="description"><?php echo $rowForums['description']; ?></p>
+			<p class="sphere"><?php echo $rowForums['sphere']; ?></p>
+			<p class="answers">
+				<i class="fas fa-comment"></i>
+				<span>
+					<?php echo $rowForums['num_of_comments']; ?> answers
+				</span>
+			</p>
+		</button>
+
+			<?php
+					}
+				}
+				else if (mysqli_num_rows($exactForum)) {
+			?>
+
+		<section "exactForum">
+
+			<div class="eachForum eachForum-2" id="<?php echo $rowExactForum['forum_id']; ?>" name="forumBtn">
+				<p class="author-date">
+				Posted by
+				<span class="author"><?php echo $rowExactForum['author_user']; ?></span>
+				<span class="date"><?php echo $rowExactForum['date']; ?></span>
+				</p>
+				<p class="topic"><?php echo $rowExactForum['topic']; ?></p>
+				<p class="description description-2"><?php echo $rowExactForum['description']; ?></p>
+				<p class="sphere"><?php echo $rowExactForum['sphere']; ?></p>
+				<p class="answers">
+					<i class="fas fa-comment"></i>
+					<span>
+						<?php echo $rowExactForum['num_of_comments']; ?> answers
+					</span>
+				</p>
+				<form class="answerForm" action="" onSubmit="window.location.reload()" method="post">
+					<textarea class="yourAnswer" name="answer_message" rows="1" placeholder="Your answer..."></textarea>
+					<input type="submit" class="answerBtn" name="answerBtn" value="Answer">
+				</form>
+			</div>
+
+
+			<?php
+				if (mysqli_num_rows($answers) > 0) {
+					while($rowMessageExactForum=mysqli_fetch_assoc($answers)) {
+			?>
+
+			<div class="eachAnswer">
+				<p class="author-date">
+					<i class="fas fa-user-circle" style="font-size:0.9rem;"></i>
+					<span class="author"><?php echo $rowMessageExactForum['from_user']; ?></span>
+					<span class="date"><?php echo $rowMessageExactForum['date']; ?></span>
+				</p>
+				<p class="eachMessageForum">
+					<?php echo $rowMessageExactForum['message']; ?>
+				</p>
+			</div>
+
+			<?php
+					}
+				} else {
+			?>
+
+			<div class="noAnswer">
+				<i class="fas fa-comment fa-2x"></i>
+				<p>No Answers Yet</p>
+				<p>Be the first to share what you think!</p>
+			</div>
+
+			<?php
+				}
+			?>
+
+		</section>
+
+			<?php
+				}
+			?>
+
   </main>
 
   <footer>
@@ -195,7 +283,11 @@ if(!empty($_COOKIE['username'])) {
   <script src="aos-master/dist/aos.js"></script>
   <script type="text/javascript" src="js/faq.js"></script>
   <script type="text/javascript" src="js/burgerJS.js"></script>
-
+	<script type="text/javascript">
+		function showForum(forum_id) {
+			location.href = "forums.php" + "?id=" + forum_id;
+		}
+	</script>
 </body>
 
 </html>

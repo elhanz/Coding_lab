@@ -124,7 +124,7 @@ if(isset($_POST['changeBtn'])) {
       </a>
     </div>
     <div class="eachPage">
-      <a href="#">
+      <a href="forums.php">
         <span>Forums</span>
         <i class="fas fa-chevron-right"></i>
       </a>
@@ -247,10 +247,10 @@ if(isset($_POST['changeBtn'])) {
         <p class="menu-item"><a href="profile.php">Profile</a></p>
         <p class="menu-item"><a href="">Chats</a></p>
         <p class="menu-item"><a href="">Courses</a></p>
-        <p class="menu-item"><a href="">Forums</a></p>
-        <p class="menu-item"><a href="">Account settings</a></p>
+        <p class="menu-item"><a href="forums.php">Forums</a></p>
+        <p class="menu-item"><a href="acc-set.php">Account settings</a></p>
         <p class="menu-item"><a href="">Support center</a></p>
-        <p class="menu-item"><a href="">Log out</a></p>
+        <p class="menu-item"><a href="exit.php">Log out</a></p>
       </div>
       <div class="col">
         <p class="heading">
