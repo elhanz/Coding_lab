@@ -268,7 +268,8 @@
 
 			$('#answerBtn').on('click', function() {
 				var answer_message = $('#answer_message').val();
-				sendAnswer(answer_message);
+				if (answer_message != "")
+					sendAnswer(answer_message);
 			});
 		});
 
