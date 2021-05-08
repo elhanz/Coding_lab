@@ -3,7 +3,7 @@
 <?php
 	ob_start();
 	$dbc = mysqli_connect('localhost', 'root', '', 'b_study') OR DIE('<p class="h1">Ошибка подключения к базе данных </p>');
-	//$dbc = mysqli_connect('mysql.zzz.com.ua', 'bakytkerey', 'Bati314565', 'bakytkerey_b') OR DIE('<p class="h1">Ошибка подключения к базе данных </p>');
+
 	if(!empty($_COOKIE['username'])) {
 	  $username = $_COOKIE['username'];
 		$forums = mysqli_query($dbc, "SELECT * FROM `forums`");
@@ -16,17 +16,6 @@
 		$rowExactForum=mysqli_fetch_assoc($exactForum);
 
 		$answers = mysqli_query($dbc, "SELECT * FROM `messages` WHERE forum_id = '$forum_id' ORDER BY message_id DESC");
-	}
-	if(isset($_POST['answerBtn'])) {
-		$date = date('Y-m-d');
-		$answer_message = mysqli_real_escape_string($dbc, trim($_POST['answer_message']));
-		mysqli_query($dbc, "INSERT INTO `messages`(`forum_id`, `from_user`, `date`, `message`) VALUES ('$forum_id','$username','$date','$answer_message')");
-
-		mysqli_query($dbc, "UPDATE `forums` SET `num_of_comments`= ((SELECT `num_of_comments` FROM forums WHERE forum_id = '$forum_id') + 1) WHERE forum_id = '$forum_id'");
-
-		ob_end_flush();
-		mysqli_close($dbc);
-		header("Refresh:0");
 	}
 
 ?>
@@ -189,47 +178,20 @@
 				<p class="sphere"><?php echo $rowExactForum['sphere']; ?></p>
 				<p class="answers">
 					<i class="fas fa-comment"></i>
-					<span>
+					<span id="numOfAnswers">
 						<?php echo $rowExactForum['num_of_comments']; ?> answers
 					</span>
 				</p>
-				<form class="answerForm" action="" onSubmit="window.location.reload()" method="post">
-					<textarea class="yourAnswer" name="answer_message" rows="1" placeholder="Your answer..."></textarea>
-					<input type="submit" class="answerBtn" name="answerBtn" value="Answer">
-				</form>
+				<div class="answerForm">
+					<textarea class="yourAnswer" id="answer_message" name="answer_message" rows="1" placeholder="Your answer..."></textarea>
+					<input type="submit" class="answerBtn" id="answerBtn" name="answerBtn" value="Answer">
+				</div>
 			</div>
 
 
-			<?php
-				if (mysqli_num_rows($answers) > 0) {
-					while($rowMessageExactForum=mysqli_fetch_assoc($answers)) {
-			?>
+			<section style="position:static;" id="answers-list">
 
-			<div class="eachAnswer">
-				<p class="author-date">
-					<i class="fas fa-user-circle" style="font-size:0.9rem;"></i>
-					<span class="author"><?php echo $rowMessageExactForum['from_user']; ?></span>
-					<span class="date"><?php echo $rowMessageExactForum['date']; ?></span>
-				</p>
-				<p class="eachMessageForum">
-					<?php echo $rowMessageExactForum['message']; ?>
-				</p>
-			</div>
-
-			<?php
-					}
-				} else {
-			?>
-
-			<div class="noAnswer">
-				<i class="fas fa-comment fa-2x"></i>
-				<p>No Answers Yet</p>
-				<p>Be the first to share what you think!</p>
-			</div>
-
-			<?php
-				}
-			?>
+			</section>
 
 		</section>
 
@@ -291,6 +253,59 @@
 	<script type="text/javascript">
 		function showForum(forum_id) {
 			location.href = "forums.php" + "?id=" + forum_id;
+		}
+	</script>
+	<script type="text/javascript">
+		let user = 	"<?php echo $_COOKIE['username']; ?>";
+		let f_id;
+		let searchParams = new URLSearchParams(window.location.search);
+
+		$( document ).ready(function() {
+			if (searchParams.has('id')) {
+				f_id = searchParams.get('id');
+				updateAnswers();
+			}
+
+			$('#answerBtn').on('click', function() {
+				var answer_message = $('#answer_message').val();
+				sendAnswer(answer_message);
+			});
+		});
+
+		function sendAnswer(answer_message) {
+			$.ajax({
+				method: "POST",
+				url: "forumAnswer.php",
+				data: { forum_id: f_id, answer: answer_message, username: user }
+			})
+				.done(function() {
+					$('#answer_message').val('');
+					changeNumOfAnswers();
+				});
+		}
+
+		function changeNumOfAnswers() {
+			$.ajax({
+				method: "POST",
+				url: "forumAnswer.php",
+				data: { f_id: f_id, number_of_answers: '1' }
+			})
+				.done(function(result) {
+					$('#numOfAnswers').html(result + ' answers');
+				});
+		}
+
+		function updateAnswers() {
+			$.ajax({
+				method: "POST",
+				url: "forumShowMessages.php",
+				data: { forum_id: f_id }
+			})
+				.done(function( result ) {
+					$('#answers-list').html(result);
+					changeNumOfAnswers();
+					setTimeout(updateAnswers, 1000);
+				});
 		}
 	</script>
 </body>
