@@ -21,6 +21,9 @@
 		$date = date('Y-m-d');
 		$answer_message = mysqli_real_escape_string($dbc, trim($_POST['answer_message']));
 		mysqli_query($dbc, "INSERT INTO `messages`(`forum_id`, `from_user`, `date`, `message`) VALUES ('$forum_id','$username','$date','$answer_message')");
+
+		mysqli_query($dbc, "UPDATE `forums` SET `num_of_comments`= ((SELECT `num_of_comments` FROM forums WHERE forum_id = '$forum_id') + 1) WHERE forum_id = '$forum_id'");
+
 		ob_end_flush();
 		mysqli_close($dbc);
 		header("Refresh:0");
@@ -170,6 +173,8 @@
 				}
 				else if (mysqli_num_rows($exactForum)) {
 			?>
+
+		<a href="forums.php" class="goBackForumBtn"><i class="fas fa-long-arrow-left"></i> Go back</a>
 
 		<section "exactForum">
 
