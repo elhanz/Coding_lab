@@ -1,35 +1,4 @@
 <!doctype html>
-<?php
-ob_start();
-$dbc = mysqli_connect('localhost', 'root', '', 'b_study') OR DIE('<p class="">Ошибка подключения к базе данных </p>');
-
-if(isset($_POST['submitReg'])){
-	$username = mysqli_real_escape_string($dbc, trim($_POST['username']));
-  $first_name = mysqli_real_escape_string($dbc, trim($_POST['first_name']));
-  $second_name = mysqli_real_escape_string($dbc, trim($_POST['second_name']));
-  $tel_number = mysqli_real_escape_string($dbc, trim($_POST['tel_number']));
-	$email = mysqli_real_escape_string($dbc, trim($_POST['email']));
-	$password = mysqli_real_escape_string($dbc, trim($_POST['password']));
-	$re_password = mysqli_real_escape_string($dbc, trim($_POST['re_password']));
-
-	if(!empty($username) && !empty($first_name) && !empty($second_name) && !empty($tel_number) && !empty($email) && !empty($password) && !empty($re_password) && ($password == $re_password)) {
-		$query = "SELECT * FROM `users` WHERE username = '$username'";
-		$data = mysqli_query($dbc, $query);
-		if(mysqli_num_rows($data) == 0) {
-			$query ="INSERT INTO `users` (username, password, first_name, second_name, tel_number, email) VALUES ('$username', SHA('$password'), '$first_name', '$second_name', '$tel_number', '$email')";
-			mysqli_query($dbc,$query);
-      ob_end_flush();
-			mysqli_close($dbc);
-			header('Location: login.php');
-		}
-		else {
-      ob_end_flush();
-			header('Location: register.php?r=1');
-		}
-	 }
-}
-
-?>
 
 <html>
 
@@ -65,7 +34,7 @@ if(isset($_POST['submitReg'])){
   </header>
 
   <div class="content">
-    <form class="" onsubmit="return validationReg();" action="register.php" method="post" >
+    <div class="form">
       <p class="heading">Register on B-Study</p>
       <p class="no-acc"><a href="login.php">Already registered? Log in.</a></p>
       <div class="form__div">
@@ -103,9 +72,9 @@ if(isset($_POST['submitReg'])){
         <label for="" class="form__label">Repeat Password</label>
         <p class="error" id="re_password_error"> </p>
       </div>
-      <input type="submit" name="submitReg" value="Register" class="submit">
+      <input type="submit" id="submitReg" name="submitReg" value="Register" class="submit">
 			<p class="form-error" id="form_error"> </p>
-    </form>
+    </div>
     <div class="background"></div>
   </div>
 
@@ -114,10 +83,34 @@ if(isset($_POST['submitReg'])){
   <script type="text/javascript" src="js/burgerJS.js"></script>
 	<script type="text/javascript" src="js/validationReg.js"></script>
 	<script type="text/javascript">
-		var registered = "<?php echo $_GET['r']; ?>";
-		if (registered == "1") {
-			document.getElementById('form_error').innerHTML = "This username is already registered";
-		}
+		$( document ).ready(function() {
+			$('#submitReg').on('click', function() {
+				var correctAll = validationReg();
+				if (correctAll == true) {
+					var username = $('#username').val();
+					var first_name = $('#first_name').val();
+					var second_name = $('#second_name').val();
+					var tel_number = $('#tel_number').val();
+					var email = $('#email').val();
+					var password = $('#password').val();
+					var re_password = $('#re_password').val();
+	  			$.ajax({
+	  				method: "POST",
+	  				url: "checkUser.php",
+	  				data: { register: '1', username: username, first_name: first_name, second_name: second_name, tel_number: tel_number, email: email, password: password, re_password: re_password }
+	  			})
+	  				.done(function(result) {
+	  					if (result == "1") {
+	  						window.location.href = 'login.php';
+	  					} else if (result == "0"){
+	  						$('#form_error').html('This username is already registered');
+	  					} else {
+	  						$('#form_error').html('ERROR. TRY AGAIN');
+	  					}
+	  				});
+				}
+			});
+		});
 	</script>
 
 </body>

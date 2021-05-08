@@ -1,33 +1,5 @@
 <!doctype html>
 
-<?php
-ob_start();
-$dbc = mysqli_connect('localhost', 'root', '', 'b_study') OR DIE('<p class="">Ошибка подключения к базе данных </p>');
-
-if(!isset($_COOKIE['username'])) {
-	if(isset($_POST['submitLog'])) {
-		$username = mysqli_real_escape_string($dbc, trim($_POST['username']));
-		$password = mysqli_real_escape_string($dbc, trim($_POST['password']));
-		if(!empty($username) && !empty($password)) {
-			$query = "SELECT `username` FROM `users` WHERE username = '$username' AND password = SHA('$password')";
-			$data = mysqli_query($dbc,$query);
-			if(mysqli_num_rows($data) == 1) {
-				$row = mysqli_fetch_assoc($data);
-				setcookie('username', $row['username'], time() + (60*60*24*30));
-				ob_end_flush();
-        header('Location: welcome.php');
-			}
-			else {
-				ob_end_flush();
-        header('Location: login.php?r=0');
-			}
-		}
-
-	}
-}
-
-?>
-
 <html>
 
 <head>
@@ -62,20 +34,20 @@ if(!isset($_COOKIE['username'])) {
   </header>
 
   <div class="content">
-    <form class="" action="login.php" method="post">
+    <div class="form">
       <p class="heading">Log in to B-Study</p>
       <p class="no-acc"><a href="register.php">Have no account? Register now.</a></p>
       <div class="form__div">
-        <input type="text" class="form__input" placeholder=" " name="username" required>
+        <input type="text" id="username" class="form__input" placeholder=" " name="username" required>
         <label for="" class="form__label">Username</label>
       </div>
       <div class="form__div">
-        <input type="password" class="form__input" placeholder=" " name="password" required>
+        <input type="password" id="password" class="form__input" placeholder=" " name="password" required>
         <label for="" class="form__label">Password</label>
       </div>
-      <input type="submit" name="submitLog" value="Log in" class="submit">
+      <input type="submit" id="submitLog" name="submitLog" value="Log in" class="submit">
       <p class="form-error" id="form_error"> </p>
-    </form>
+    </div>
     <div class="background"></div>
   </div>
 
@@ -83,10 +55,26 @@ if(!isset($_COOKIE['username'])) {
   <script type="text/javascript" src="js/faq.js"></script>
   <script type="text/javascript" src="js/burgerJS.js"></script>
 	<script type="text/javascript">
-		var registered = "<?php echo $_GET['r']; ?>";
-		if (registered == "0") {
-			document.getElementById('form_error').innerHTML = "Username or password is not correct";
-		}
+  	$( document ).ready(function() {
+  		$('#submitLog').on('click', function() {
+  			var username = $('#username').val();
+  			var password = $('#password').val();
+  			$.ajax({
+  				method: "POST",
+  				url: "checkUser.php",
+  				data: { login: '1', username: username, password: password }
+  			})
+  				.done(function(result) {
+  					if (result == "1") {
+  						window.location.href = 'welcome.php';
+  					} else if (result == "0"){
+  						$('#form_error').html('Username or password is not correct');
+  					} else {
+  						$('#form_error').html('ERROR. TRY AGAIN');
+  					}
+  				});
+  		});
+  	});
 	</script>
 </body>
 

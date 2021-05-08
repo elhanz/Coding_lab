@@ -46,7 +46,7 @@ header a:hover {
   flex-direction: column;
   position: relative;
 }
-form {
+.form {
   padding: 100px 0 100px 0;
   width: 550px;
   min-height: calc(100vh - 200px);
@@ -57,12 +57,12 @@ form {
   background-color: white;
   z-index: 20;
 }
-form .heading {
+.form .heading {
   color: #151515;
   font-size: 30px;
   font-weight: bolder;
 }
-form .no-acc {
+.form .no-acc {
   color: #717f94;
 }
 
@@ -129,6 +129,7 @@ form .no-acc {
   font-size: 0.85rem;
   color:rgb(207, 103, 103);
   text-align: center;
+  min-height: 1rem;
 }
 
 .submit {
