@@ -10,48 +10,6 @@ if(!empty($_COOKIE['username'])) {
 	$rowProfileInfo = mysqli_fetch_array($profileInfo);
 }
 
-if(isset($_POST['saveBtn'])) {
-	$first_name = mysqli_real_escape_string($dbc, trim($_POST['first_name']));
-  $second_name = mysqli_real_escape_string($dbc, trim($_POST['second_name']));
-	$country = mysqli_real_escape_string($dbc, trim($_POST['country']));
-	$address = mysqli_real_escape_string($dbc, trim($_POST['address']));
-  $tel_number = mysqli_real_escape_string($dbc, trim($_POST['tel_number']));
-	$email = mysqli_real_escape_string($dbc, trim($_POST['email']));
-
-	if(!empty($first_name) && !empty($second_name) && !empty($tel_number) && !empty($email) && !empty($country) && !empty($address)) {
-		$query ="UPDATE `users` SET `first_name`='$first_name', `second_name`='$second_name', `country`='$country', `address`='$address', `tel_number`='$tel_number', `email`='$email' WHERE `username` = '$username' ";
-		mysqli_query($dbc,$query);
-
-		ob_end_flush();
-		mysqli_close($dbc);
-		header('Location: profile.php');
-	 }
-}
-
-if(isset($_POST['changeBtn'])) {
-	$current_password = mysqli_real_escape_string($dbc, trim($_POST['current_password']));
-  $password = mysqli_real_escape_string($dbc, trim($_POST['password']));
-	$re_password = mysqli_real_escape_string($dbc, trim($_POST['re_password']));
-
-	if(!empty($re_password) && !empty($password) && !empty($current_password)) {
-		$query_check = "SELECT `username` FROM `users` WHERE username = '$username' AND password = SHA('$current_password')";
-		$data = mysqli_query($dbc,$query_check);
-		if(mysqli_num_rows($data) == 1)  {
-			$query ="UPDATE `users` SET `password`= SHA('$password') WHERE `username` = '$username' ";
-			mysqli_query($dbc,$query);
-			ob_end_flush();
-			mysqli_close($dbc);
-			header('Location: acc-set.php?p=1');
-		} else {
-			ob_end_flush();
-			mysqli_close($dbc);
-			header('Location: acc-set.php?p=0');
-		}
-
-
-
-	 }
-}
 ?>
 
 <html>
@@ -164,62 +122,59 @@ if(isset($_POST['changeBtn'])) {
 				<p class="eachSection">Payment</p>
 			</div>
 			<div class="AccSetSectionBlock">
-				<form class="" onsubmit="return validationSave();" action="acc-set.php" method="post">
-					<p class="heading">Account</p>
-					<div class="eachProfileInfo">
-						<p class="infoName">First name</p>
-						<input type="text" id="first_name" name="first_name" value="<?php echo $rowProfileInfo[1]; ?>" required>
-					</div>
-					<div class="eachProfileInfo">
-						<p class="infoName">Second name</p>
-						<input type="text" id="second_name" name="second_name" value="<?php echo $rowProfileInfo[2]; ?>" required>
-					</div>
-					<div class="eachProfileInfo">
-						<p class="infoName">Country</p>
-						<input type="text" name="country" value="<?php echo $rowProfileInfo[3]; ?>">
-					</div>
-					<div class="eachProfileInfo">
-						<p class="infoName">Address</p>
-						<input type="text" name="address" value="<?php echo $rowProfileInfo[4]; ?>">
-					</div>
-					<div class="eachProfileInfo">
-						<p class="infoName">Telephone number</p>
-						<input type="text" id="tel_number" name="tel_number" value="<?php echo $rowProfileInfo[5]; ?>" required>
-					</div>
-					<div class="eachProfileInfo">
-						<p class="infoName">Email</p>
-						<input type="text" id="email" name="email" value="<?php echo $rowProfileInfo[6]; ?>" required>
-					</div>
-					<div class="error_div">
-						<p id="save_error">
+				<p class="heading">Account</p>
+				<div class="eachProfileInfo">
+					<p class="infoName">First name</p>
+					<input type="text" id="first_name" name="first_name" value="<?php echo $rowProfileInfo[1]; ?>" required>
+				</div>
+				<div class="eachProfileInfo">
+					<p class="infoName">Second name</p>
+					<input type="text" id="second_name" name="second_name" value="<?php echo $rowProfileInfo[2]; ?>" required>
+				</div>
+				<div class="eachProfileInfo">
+					<p class="infoName">Country</p>
+					<input type="text" id="country" name="country" value="<?php echo $rowProfileInfo[3]; ?>">
+				</div>
+				<div class="eachProfileInfo">
+					<p class="infoName">Address</p>
+					<input type="text" id="address" name="address" value="<?php echo $rowProfileInfo[4]; ?>">
+				</div>
+				<div class="eachProfileInfo">
+					<p class="infoName">Telephone number</p>
+					<input type="text" id="tel_number" name="tel_number" value="<?php echo $rowProfileInfo[5]; ?>" required>
+				</div>
+				<div class="eachProfileInfo">
+					<p class="infoName">Email</p>
+					<input type="text" id="email" name="email" value="<?php echo $rowProfileInfo[6]; ?>" required>
+				</div>
+				<div class="error_div">
+					<p id="save_error">
 
-						</p>
-					</div>
-					<input type="submit" name="saveBtn" value="Save" class="save-btn">
-				</form>
+					</p>
+				</div>
+				<input type="submit" id="save-btn" name="saveBtn" value="Save" class="save-btn">
+
 
 				<hr style="margin-top: 30px; margin-bottom: 30px; color: rgb(219, 219, 219);">
-				<form class="" onsubmit="return validationChangePass();" action="acc-set.php" method="post">
-					<p class="heading">Password</p>
-					<div class="eachProfileInfo">
-						<p class="infoName">Current password</p>
-						<input type="text" id="current_password" name="current_password" value="" required>
-					</div>
-					<div class="eachProfileInfo">
-						<p class="infoName">New password</p>
-						<input type="text" id="password" name="password" value="" required>
-					</div>
-					<div class="eachProfileInfo">
-						<p class="infoName">Repeat new password</p>
-						<input type="text" id="re_password" name="re_password" value="" required>
-					</div>
-					<div class="error_div">
-						<p id="change_pass_error">
+				<p class="heading">Password</p>
+				<div class="eachProfileInfo">
+					<p class="infoName">Current password</p>
+					<input type="password" id="current_password" name="current_password" value="" required>
+				</div>
+				<div class="eachProfileInfo">
+					<p class="infoName">New password</p>
+					<input type="password" id="password" name="password" value="" required>
+				</div>
+				<div class="eachProfileInfo">
+					<p class="infoName">Repeat new password</p>
+					<input type="password" id="re_password" name="re_password" value="" required>
+				</div>
+				<div class="error_div">
+					<p id="change_pass_error">
 
-						</p>
-					</div>
-					<input type="submit" name="changeBtn" value="Change password" class="save-btn">
-				</form>
+					</p>
+				</div>
+				<input type="submit" id="changeBtn" name="changeBtn" value="Change password" class="save-btn">
 
 				<hr style="margin-top: 30px; margin-bottom: 30px; color: rgb(219, 219, 219);">
 			</div>
@@ -277,14 +232,60 @@ if(isset($_POST['changeBtn'])) {
   <script type="text/javascript" src="js/burgerJS.js"></script>
 	<script type="text/javascript" src="js/validationAccSet.js"></script>
 	<script type="text/javascript">
-		var correctPassword = "<?php echo $_GET['p']; ?>";
-		if (correctPassword == "1") {
-			$("#change_pass_error").toggleClass('correct');
-			document.getElementById('change_pass_error').innerHTML = "Password was successfully changed";
-		}
-		if (correctPassword == "0") {
-			document.getElementById('change_pass_error').innerHTML = "Current password is not correct";
-		}
+		$(document).ready(function() {
+			$('#save-btn').on('click', function() {
+				if ($("#save_error").hasClass('correct')) {
+					$("#save_error").toggleClass('correct');
+				}
+				if (validationSave()) {
+					var first_name = document.getElementById('first_name').value;
+				  var second_name = document.getElementById('second_name').value;
+					var country = document.getElementById('country').value;
+					var address = document.getElementById('address').value;
+				  var email = document.getElementById('email').value;
+				  var tel_number = document.getElementById('tel_number').value;
+					let username = 	"<?php echo $_COOKIE['username']; ?>";
+					$.ajax({
+						method: "POST",
+						url: "profileSettings.php",
+						data: { saveBtn: '1', username: username, first_name: first_name, second_name: second_name, country: country, address: address, email: email, tel_number: tel_number }
+					})
+						.done(function() {
+							$("#save_error").toggleClass('correct');
+							document.getElementById('save_error').innerHTML = "Profile information was successfully saved!";
+						});
+				}
+			});
+
+			$('#changeBtn').on('click', function() {
+				if ($("#change_pass_error").hasClass('correct')) {
+					$("#change_pass_error").toggleClass('correct');
+				}
+				if (validationChangePass()) {
+					var current_password = document.getElementById('current_password').value;
+				  var new_password = document.getElementById('password').value;
+					var new_re_password = document.getElementById('re_password').value;
+					let username = 	"<?php echo $_COOKIE['username']; ?>";
+					$.ajax({
+						method: "POST",
+						url: "profileSettings.php",
+						data: { changeBtn: '1', username: username, current_password: current_password, password: new_password, re_password: new_re_password }
+					})
+						.done(function( result ) {
+							if (result == "1") {
+								$("#change_pass_error").toggleClass('correct');
+								document.getElementById('change_pass_error').innerHTML = "Password was successfully changed!";
+							} else if (result == "0"){
+								document.getElementById('change_pass_error').innerHTML = "Current password is not correct!";
+							} else {
+								document.getElementById('change_pass_error').innerHTML = "ERROR. TRY AGAIN!";
+							}
+						});
+				}
+			});
+		});
+
+
 	</script>
 </body>
 

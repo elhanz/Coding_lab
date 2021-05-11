@@ -29,9 +29,8 @@ function validationSave() {
   if (emailChecker.test(email) == false) {
     errorText += "- Please enter a valid email' <br>";
   }
-
+  document.getElementById('save_error').innerHTML = errorText;
   if (errorText != "") {
-    document.getElementById('save_error').innerHTML = errorText;
     return false;
   }
   else {
@@ -63,9 +62,8 @@ function validationChangePass() {
   if (re_password.trim() != password.trim()) {
     errorText += "- Please repeate new password <br>";
   }
-
+  document.getElementById('change_pass_error').innerHTML = errorText;
   if (errorText != "") {
-    document.getElementById('change_pass_error').innerHTML = errorText;
     return false;
   }
   else {
