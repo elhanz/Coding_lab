@@ -1,4 +1,5 @@
 <?php
+if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 	ob_start();
 	$dbc = mysqli_connect('localhost', 'root', '', 'b_study') OR DIE('<p class="h1">Ошибка подключения к базе данных </p>');
 
@@ -34,4 +35,5 @@
 		ob_end_flush();
 		mysqli_close($dbc);
 	}
+}
 ?>
