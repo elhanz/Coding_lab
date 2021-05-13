@@ -6,17 +6,24 @@
 
 	if(!empty($_COOKIE['username'])) {
 	  $username = $_COOKIE['username'];
-		$forums = mysqli_query($dbc, "SELECT * FROM `forums`");
+
+		if (isset($_POST['createForum'])) {
+			$topic = mysqli_real_escape_string($dbc, trim($_POST['topic']));
+			$description = mysqli_real_escape_string($dbc, trim($_POST['description']));
+			$sphere = mysqli_real_escape_string($dbc, trim($_POST['sphere']));
+			$date = date('Y-m-d');
+
+			if(!empty($topic)) {
+				$query ="INSERT INTO `forums` (author_user, topic, description, date, sphere, num_of_comments) VALUES ('$username', '$topic', '$description', '$date', '$sphere', 0)";
+				mysqli_query($dbc,$query);
+				ob_end_flush();
+				mysqli_close($dbc);
+				header('Location: forums.php');
+			}
+
+		}
 	}
 
-
-	if(isset($_GET['id']) && (preg_match("/^[0-9]+$/i", $_GET['id']))) {
-		$forum_id = $_GET["id"];
-		$exactForum = mysqli_query($dbc, "SELECT * FROM `forums` WHERE forum_id = '$forum_id'");
-		$rowExactForum=mysqli_fetch_assoc($exactForum);
-
-		$answers = mysqli_query($dbc, "SELECT * FROM `messages` WHERE forum_id = '$forum_id' ORDER BY message_id DESC");
-	}
 
 ?>
 
@@ -124,82 +131,29 @@
   </section>
 
   <main>
-		<?php
-			if(!(isset($_GET['id']))) {
-		?>
-		<p class="heading">Forums</p>
-		<a  href="forumCreation.php" class="createForumBtn">Create new discussion</a>
-		<form class="" action="" method="post">
-			<section class="filterSection">
-				<input type="submit" name="NewestBtn" value="Newest">
-				<input type="submit" name="ActiveBtn" value="Active">
-				<input type="submit" name="UnansweredBtn" value="Unanswered">
-			</section>
-		</form>
-
-		<?php
-				while($rowForums=mysqli_fetch_assoc($forums)) {
-		?>
-
-		<button class="eachForum" id="<?php echo $rowForums['forum_id']; ?>" name="forumBtn" onclick="showForum(this.id)">
-			<p class="author-date">
-			Posted by
-			<span class="author"><?php echo $rowForums['author_user']; ?></span>
-			<span class="date"><?php echo $rowForums['date']; ?></span>
-			</p>
-			<p class="topic"><?php echo $rowForums['topic']; ?></p>
-			<p class="description"><?php echo $rowForums['description']; ?></p>
-			<p class="sphere"><?php echo $rowForums['sphere']; ?></p>
-			<p class="answers">
-				<i class="fas fa-comment"></i>
-				<span>
-					<?php echo $rowForums['num_of_comments']; ?> answers
-				</span>
-			</p>
-		</button>
-
-			<?php
-					}
-				}
-				else if (mysqli_num_rows($exactForum)) {
-			?>
-
 		<a href="forums.php" class="goBackForumBtn"><i class="fas fa-long-arrow-left"></i> Go back</a>
-
-		<section "exactForum">
-
-			<div class="eachForum eachForum-2" id="<?php echo $rowExactForum['forum_id']; ?>" name="forumBtn">
-				<p class="author-date">
-				Posted by
-				<span class="author"><?php echo $rowExactForum['author_user']; ?></span>
-				<span class="date"><?php echo $rowExactForum['date']; ?></span>
-				</p>
-				<p class="topic"><?php echo $rowExactForum['topic']; ?></p>
-				<p class="description description-2"><?php echo $rowExactForum['description']; ?></p>
-				<p class="sphere"><?php echo $rowExactForum['sphere']; ?></p>
-				<p class="answers">
-					<i class="fas fa-comment"></i>
-					<span id="numOfAnswers">
-						<?php echo $rowExactForum['num_of_comments']; ?> answers
-					</span>
-				</p>
-				<div class="answerForm">
-					<textarea class="yourAnswer" id="answer_message" name="answer_message" rows="1" placeholder="Your answer..."></textarea>
-					<input type="submit" class="answerBtn" id="answerBtn" name="answerBtn" value="Answer">
-				</div>
+		<p class="heading">Forum creation</p>
+		<form class="forumCreation" action="forumCreation.php" method="post">
+			<div class="eachTextField">
+				<label for="">Topic/Question</label>
+				<input type="text" name="topic" value="" placeholder="..." required>
 			</div>
-
-
-			<section style="position:static;" id="answers-list">
-
-			</section>
-
-		</section>
-
-			<?php
-				}
-			?>
-
+			<div class="eachTextField">
+				<label for="">Description</label>
+				<textarea name="description" rows="8" placeholder="..."></textarea>
+			</div>
+			<div class="eachTextField">
+				<label for="">Sphere</label>
+				<select id="cars" name="sphere" required>
+					<option value="other" disabled selected>...</option>
+				  <option value="mathematics">mathematics</option>
+				  <option value="physics">physics</option>
+				  <option value="IT">IT</option>
+				  <option value="other">other</option>
+				</select>
+			</div>
+			<input class="createForumBtn" type="submit" name="createForum" value="Create" style="width:100%; margin-top: 20px; background-color: #0c8b51; color: white;">
+		</form>
   </main>
 
   <footer>
@@ -251,65 +205,6 @@
   <script src="aos-master/dist/aos.js"></script>
   <script type="text/javascript" src="js/faq.js"></script>
   <script type="text/javascript" src="js/burgerJS.js"></script>
-	<script type="text/javascript">
-		function showForum(forum_id) {
-			location.href = "forums.php" + "?id=" + forum_id;
-		}
-	</script>
-	<script type="text/javascript">
-		let user = 	"<?php echo $_COOKIE['username']; ?>";
-		let f_id;
-		let searchParams = new URLSearchParams(window.location.search);
-
-		$( document ).ready(function() {
-			if (searchParams.has('id')) {
-				f_id = searchParams.get('id');
-				updateAnswers();
-			}
-
-			$('#answerBtn').on('click', function() {
-				var answer_message = $('#answer_message').val();
-				if (answer_message != "")
-					sendAnswer(answer_message);
-			});
-		});
-
-		function sendAnswer(answer_message) {
-			$.ajax({
-				method: "POST",
-				url: "forumAnswer.php",
-				data: { forum_id: f_id, answer: answer_message, username: user }
-			})
-				.done(function() {
-					$('#answer_message').val('');
-					changeNumOfAnswers();
-				});
-		}
-
-		function changeNumOfAnswers() {
-			$.ajax({
-				method: "POST",
-				url: "forumAnswer.php",
-				data: { f_id: f_id, number_of_answers: '1' }
-			})
-				.done(function(result) {
-					$('#numOfAnswers').html(result + ' answers');
-				});
-		}
-
-		function updateAnswers() {
-			$.ajax({
-				method: "POST",
-				url: "forumShowMessages.php",
-				data: { forum_id: f_id }
-			})
-				.done(function( result ) {
-					$('#answers-list').html(result);
-					changeNumOfAnswers();
-					setTimeout(updateAnswers, 1000);
-				});
-		}
-	</script>
 </body>
 
 </html>
