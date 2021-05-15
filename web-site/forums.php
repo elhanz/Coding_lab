@@ -168,7 +168,7 @@
 
 		<section "exactForum">
 
-			<div class="eachForum eachForum-2" id="<?php echo $rowExactForum['forum_id']; ?>" name="forumBtn">
+			<div class="eachForum eachForum-2" id="<?php echo $rowExactForum['forum_id']; ?>" name="forumBtn" style="width: calc(100% - 40px);">
 				<p class="author-date">
 				Posted by
 				<span class="author"><?php echo $rowExactForum['author_user']; ?></span>

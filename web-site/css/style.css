@@ -775,7 +775,7 @@ main .profileInfoBlock {
   flex-direction: column;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
-  width: calc(100% - 40px);
+  width: 100%;
 }
 .eachForum:hover {
   background-color: #edf7f1;
